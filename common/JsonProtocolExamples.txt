@@ -1,0 +1,30 @@
+// JSON Communication Protocol Examples
+// a) Teacher Status Broadcast
+/*
+{
+  "message_type": "teacher_status",
+  "sender_id": "CampusCore",
+  "target_id": "all",
+  "timestamp": "2025-09-13T12:34:56Z",
+  "data": {
+    "teacher_id": "teacher_001",
+    "status": "online"
+  }
+}
+*/
+
+// b) File Transfer Request
+/*
+{
+  "message_type": "file_transfer_request",
+  "sender_id": "teacher_001",
+  "target_id": "classroom_101",
+  "timestamp": "2025-09-13T12:35:10Z",
+  "data": {
+    "file_name": "lesson1.pdf",
+    "file_size": 1048576,
+    "file_type": "application/pdf",
+    "description": "Lesson 1 slides"
+  }
+}
+*/
