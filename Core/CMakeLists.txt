@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.5)
 project(CampusCore LANGUAGES CXX)
 
 # Platform adaptation: Only build on Windows or Linux
@@ -11,16 +11,15 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Network)
+find_package(Qt5 REQUIRED COMPONENTS Core Network)
 add_executable(CampusCore
-    main.cpp
     CampusCoreServer.cpp
     CampusCoreServer.h
 )
 
 target_link_libraries(CampusCore
-    Qt6::Core
-    Qt6::Network
+    Qt5::Core
+    Qt5::Network
     common # internal shared library, if exists
 )
 target_include_directories(CampusCore PRIVATE ../common)

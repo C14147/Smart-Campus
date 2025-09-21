@@ -1,0 +1,121 @@
+name: SmartCampus CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-core:
+    name: Build CampusCore (Windows, Linux)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt5
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+      - name: Configure
+        run: |
+          mkdir -p build/Core
+          cd build/Core
+          cmake ../../../Core -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cd build/Core
+          cmake --build . --config Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CampusCore-${{ matrix.os }}
+          path: build/Core/*
+
+  build-classroom:
+    name: Build ClassroomManager (Windows, Android)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest] # Android build requires custom runner or setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt5
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+      - name: Configure
+        run: |
+          mkdir -p build/ClassroomManager
+          cd build/ClassroomManager
+          cmake ../../../ClassroomManager -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cd build/ClassroomManager
+          cmake --build . --config Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClassroomManager-${{ matrix.os }}
+          path: build/ClassroomManager/*
+
+  build-teacher:
+    name: Build TeacherWorkbench (Windows, macOS, Android)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest] # Android build requires custom runner or setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt5
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+      - name: Configure
+        run: |
+          mkdir -p build/TeacherWorkbench
+          cd build/TeacherWorkbench
+          cmake ../../../TeacherWorkbench -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cd build/TeacherWorkbench
+          cmake --build . --config Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeacherWorkbench-${{ matrix.os }}
+          path: build/TeacherWorkbench/*
+
+  build-roomdisplay:
+    name: Build RoomFunctionDisplay (Android)
+    runs-on: ubuntu-latest # Android builds require special setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Install Qt5 (with Android)
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+          target: android
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Configure
+        run: |
+          mkdir -p build/RoomFunctionDisplay
+          cd build/RoomFunctionDisplay
+          cmake ../../../RoomFunctionDisplay -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DQT_ANDROID_BUILD=ON
+      - name: Build
+        run: |
+          cd build/RoomFunctionDisplay
+          cmake --build . --config Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoomFunctionDisplay-android
+          path: build/RoomFunctionDisplay/*

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.5)
 project(ClassroomManager LANGUAGES CXX)
 
 # Platform adaptation: Only build on Windows or Android
@@ -11,19 +11,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Network Gui Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Network Gui Widgets)
 add_executable(ClassroomManager
-    main.cpp
-    # ... other source files ...
     ../common/NetworkManager.cpp
     ../common/NetworkManager.h
 )
 
 target_link_libraries(ClassroomManager
-    Qt6::Core
-    Qt6::Network
-    Qt6::Gui
-    Qt6::Widgets
+    Qt5::Core
+    Qt5::Network
+    Qt5::Gui
+    Qt5::Widgets
     common
 )
 target_include_directories(ClassroomManager PRIVATE ../common)

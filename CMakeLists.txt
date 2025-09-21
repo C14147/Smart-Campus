@@ -75,3 +75,10 @@ install(TARGETS SmartCampus
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(SmartCampus)
 endif()
+add_subdirectory(ClassroomManager)
+
+add_subdirectory(common)
+add_subdirectory(Core)
+add_subdirectory(RoomFunctionDisplay)
+add_subdirectory(TeacherWorkbench)
+

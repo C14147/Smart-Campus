@@ -1,0 +1,66 @@
+name: Android Qt App CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-android-apps:
+    name: Build Android Qt Apps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Install Qt5 (with Android)
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+          target: android
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install jom
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wine
+          wget https://download.qt.io/official_releases/jom/jom_1_1_3.zip
+          unzip jom_1_1_3.zip -d $HOME/jom
+          echo "$HOME/jom" >> $GITHUB_PATH
+      - name: Build ClassroomManager (Android)
+        run: |
+          mkdir -p build/ClassroomManager
+          cd build/ClassroomManager
+          cmake ../../../ClassroomManager -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DQT_ANDROID_BUILD=ON
+          wine $HOME/jom/jom.exe
+      - name: Build TeacherWorkbench (Android)
+        run: |
+          mkdir -p build/TeacherWorkbench
+          cd build/TeacherWorkbench
+          cmake ../../../TeacherWorkbench -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DQT_ANDROID_BUILD=ON
+          wine $HOME/jom/jom.exe
+      - name: Build RoomFunctionDisplay (Android)
+        run: |
+          mkdir -p build/RoomFunctionDisplay
+          cd build/RoomFunctionDisplay
+          cmake ../../../RoomFunctionDisplay -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DQT_ANDROID_BUILD=ON
+          wine $HOME/jom/jom.exe
+      - name: Upload ClassroomManager Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClassroomManager-android
+          path: build/ClassroomManager/*
+      - name: Upload TeacherWorkbench Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TeacherWorkbench-android
+          path: build/TeacherWorkbench/*
+      - name: Upload RoomFunctionDisplay Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoomFunctionDisplay-android
+          path: build/RoomFunctionDisplay/*
